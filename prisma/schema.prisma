@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  passwordHash String
+  fullName     String?
+  createdAt    DateTime @default(now())
+}
+
+model Student {
+  id           Int           @id @default(autoincrement())
+  studentId    String        @unique
+  fullName     String
+  passwordHash String
+  createdAt    DateTime      @default(now())
+  attendances  Attendance[]
+}
+
+model Session {
+  id           Int           @id @default(autoincrement())
+  title        String
+  startedAt    DateTime      @default(now())
+  endedAt      DateTime?
+  attendances  Attendance[]
+}
+
+model Attendance {
+  id         Int      @id @default(autoincrement())
+  sessionId  Int
+  studentId  Int
+  method     String   // "qr" | "manual"
+  checkedAt  DateTime @default(now())
+
+  session    Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  student    Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, studentId])
+  @@index([sessionId])
+  @@index([studentId])
+}
