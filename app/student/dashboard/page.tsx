@@ -33,6 +33,21 @@ export default function StudentDashboard() {
     router.push('/student/login');
   }
 
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    const reset = () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => logout(), 60000);
+    };
+    const events = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
+    events.forEach(e => window.addEventListener(e, reset));
+    reset();
+    return () => {
+      clearTimeout(timeout);
+      events.forEach(e => window.removeEventListener(e, reset));
+    };
+  }, []);
+
   if (!data) return <div className="min-h-screen flex items-center justify-center text-ink-500">...</div>;
 
   const firstName = data.me.fullName.split(' ')[0];
