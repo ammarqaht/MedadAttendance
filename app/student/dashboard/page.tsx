@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import useSWR from 'swr';
 import { useRouter } from 'next/navigation';
 import Brand from '@/components/Brand';
 import ToastHost from '@/components/Toast';
@@ -14,19 +15,24 @@ type Me = {
   log: { id: number; title: string; method: string; checkedAt: string }[];
 };
 
+const fetcher = async (url: string) => {
+  const res = await fetch(url);
+  if (res.status === 401) throw new Error('Unauthorized');
+  if (!res.ok) throw new Error('Error fetching data');
+  return res.json();
+};
+
 export default function StudentDashboard() {
   const router = useRouter();
-  const [data, setData] = useState<Me | null>(null);
   const [scanOpen, setScanOpen] = useState(false);
+  const { data, error, mutate } = useSWR<Me>('/api/student/me', fetcher, {
+    refreshInterval: 10000,
+    revalidateOnFocus: true,
+  });
 
-  async function load() {
-    const r = await fetch('/api/student/me');
-    if (r.status === 401) { router.push('/student/login'); return; }
-    const j = await r.json();
-    setData(j);
-  }
-
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    if (error) router.push('/student/login');
+  }, [error, router]);
 
   async function logout() {
     await fetch('/api/auth/logout', { method: 'POST' });
@@ -132,7 +138,7 @@ export default function StudentDashboard() {
       {scanOpen && (
         <StudentScanner
           onClose={() => setScanOpen(false)}
-          onSuccess={() => { setScanOpen(false); load(); }}
+          onSuccess={() => { setScanOpen(false); mutate(); }}
         />
       )}
     </div>
