@@ -33,7 +33,6 @@ export async function GET(req: NextRequest) {
         try { controller.close(); } catch { /* */ }
       };
 
-      // @ts-expect-error - signal exists on req
       req.signal?.addEventListener?.('abort', close);
     }
   });
