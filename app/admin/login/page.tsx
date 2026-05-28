@@ -5,8 +5,8 @@ import Brand from '@/components/Brand';
 
 export default function AdminLogin() {
   const router = useRouter();
-  const [u, setU] = useState('admin');
-  const [p, setP] = useState('admin123');
+  const [u, setU] = useState('ammar');
+  const [p, setP] = useState('1234');
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
 
@@ -53,7 +53,7 @@ export default function AdminLogin() {
           </button>
 
           <p className="text-xs text-ink-400 text-center pt-4 border-t border-ink-200">
-            البيانات الافتراضية: admin / admin123
+            البيانات الافتراضية: ammar / 1234
           </p>
         </form>
       </div>

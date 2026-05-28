@@ -4,14 +4,14 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  const adminPass = await bcrypt.hash('admin123', 10);
+  const adminPass = await bcrypt.hash('1234', 10);
   await prisma.admin.upsert({
-    where: { username: 'admin' },
-    update: {},
-    create: { username: 'admin', passwordHash: adminPass, fullName: 'المشرف العام' }
+    where: { username: 'ammar' },
+    update: { passwordHash: adminPass },
+    create: { username: 'ammar', passwordHash: adminPass, fullName: 'عمار' }
   });
 
-  console.log('Seed complete. Admin: admin / admin123. Students list is empty.');
+  console.log('Seed complete. Admin: ammar / 1234. Students list is empty.');
 }
 
 main()
